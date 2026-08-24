@@ -1,0 +1,18 @@
+---
+- name: Standart istifadəçi yaratmaq və sudo icazəsi vermək
+  hosts: linux
+  become: yes
+  tasks:
+    - name: İstifadəçi yarat
+      user:
+        name: secadmin
+        shell: /bin/bash
+        groups: wheel
+        append: yes
+        state: present
+
+    - name: SSH açarını əlavə et
+      authorized_key:
+        user: secadmin
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"

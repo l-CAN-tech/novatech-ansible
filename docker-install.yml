@@ -1,0 +1,24 @@
+---
+- name: Docker Engine quraşdırılması
+  hosts: docker_hosts
+  become: yes
+  tasks:
+    - name: Docker CE repo-nu əlavə et
+      command: dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Docker paketlərini quraşdır
+      dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    - name: Docker xidmətini işə sal və aktivləşdir
+      service:
+        name: docker
+        state: started
+        enabled: yes 

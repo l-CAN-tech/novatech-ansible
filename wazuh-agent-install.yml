@@ -1,0 +1,32 @@
+---
+- name: Wazuh Agent quraşdırılması
+  hosts: linux
+  become: yes
+  vars:
+    wazuh_manager_ip: "10.10.40.20"
+  tasks:
+    - name: Wazuh RPM repo açarını əlavə et
+      rpm_key:
+        key: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+        state: present
+
+    - name: Wazuh repo faylını yarat
+      yum_repository:
+        name: wazuh
+        description: Wazuh repository
+        baseurl: https://packages.wazuh.com/4.x/yum/
+        gpgcheck: yes
+        gpgkey: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+
+    - name: Wazuh agent quraşdır
+      dnf:
+        name: wazuh-agent
+        state: present
+      environment:
+        WAZUH_MANAGER: "{{ wazuh_manager_ip }}"
+
+    - name: Wazuh agent xidmətini işə sal
+      service:
+        name: wazuh-agent
+        state: started
+        enabled: yes

@@ -1,0 +1,20 @@
+---
+- name: Bütün paketləri yenilə
+  hosts: linux
+  become: yes
+  tasks:
+    - name: DNF cache-i yenilə
+      dnf:
+        update_cache: yes
+      ignore_errors: yes
+
+    - name: Bütün paketləri son versiyaya yenilə
+      dnf:
+        name: "*"
+        state: latest
+      ignore_errors: yes
+
+    - name: Yenidən başlatma tələb olunub-olmadığını yoxla
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_check

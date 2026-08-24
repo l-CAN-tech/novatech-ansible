@@ -1,0 +1,24 @@
+---
+- name: SSH sərtləşdirmə
+  hosts: linux
+  become: yes
+  tasks:
+    - name: Root login-i qadağan et
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+      notify: SSH-i yenidən başlat
+
+    - name: Parol autentifikasiyasını söndür
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+      notify: SSH-i yenidən başlat
+
+  handlers:
+    - name: SSH-i yenidən başlat
+      service:
+        name: sshd
+        state: restarted
