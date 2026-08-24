@@ -1,0 +1,32 @@
+services:
+  webapp:
+    image: nginx:latest
+    container_name: novatech-webapp
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - webapp_data:/usr/share/nginx/html
+      - ./nginx-logs:/var/log/nginx
+    networks:
+      - dmz_net
+
+  db:
+    image: mariadb:11
+    container_name: novatech-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "GucluParol!2026"
+      MYSQL_DATABASE: novatech_db
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - dmz_net
+
+volumes:
+  webapp_data:
+  db_data:
+
+networks:
+  dmz_net:
+    driver: bridge
